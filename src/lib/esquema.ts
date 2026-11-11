@@ -200,4 +200,15 @@ CREATE TABLE registro_auditoria (
 );
 `,
   },
+  {
+    // Cada afiliado nuevo espera la aprobación de Dirección.
+    id: '002_aprobacion_afiliados',
+    sql: `
+ALTER TABLE personas ADD COLUMN estado text NOT NULL DEFAULT 'pendiente';
+ALTER TABLE personas ADD COLUMN aprobado_por text;
+ALTER TABLE personas ADD COLUMN aprobado_en timestamptz;
+ALTER TABLE personas ADD COLUMN telefono text;
+UPDATE personas SET estado = 'aprobado', aprobado_por = 'semilla', aprobado_en = now() WHERE email IN ('demo1@agora.invalid','demo2@agora.invalid','demo3@agora.invalid');
+`,
+  },
 ];

@@ -7,6 +7,7 @@ import { AVISO_PRIVACIDAD, FINALIDADES, INTERESES, MANIFESTACION, MUNICIPIOS, VE
 import { PAISES_HISPANOAMERICANOS } from '@/lib/voto';
 import FormAlta from '@/components/FormAlta';
 import Logo from '@/components/Logo';
+import BarraNav from '@/components/BarraNav';
 import MarcaPartido from '@/components/MarcaPartido';
 
 export const dynamic = 'force-dynamic';
@@ -20,6 +21,7 @@ export default async function Alta({ searchParams }: { searchParams: Promise<{ i
     <main className="publico">
       <div className="caja panel" style={{ width: 'min(680px, 100%)' }}>
         <div className="panel-cuerpo">
+          <BarraNav salir={!!s} />
           <div className="linea" style={{ justifyContent: 'space-between' }}><div className="marca"><Logo />{NOMBRE}</div><MarcaPartido /></div>
           {ROTULO && <span className="rotulo">{ROTULO}</span>}
           {s ? (

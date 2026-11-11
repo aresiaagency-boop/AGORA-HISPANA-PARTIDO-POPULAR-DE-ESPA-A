@@ -132,5 +132,6 @@ export async function sembrar(c: Consulta): Promise<void> {
       JSON.stringify({ finalidad: 'comunicaciones_politicas', municipio: null }),
     ],
   );
+  await c(`UPDATE personas SET estado = 'aprobado', aprobado_por = 'semilla', aprobado_en = now() WHERE email IN ('demo1@agora.invalid','demo2@agora.invalid','demo3@agora.invalid')`);
   await c(`INSERT INTO registro_auditoria (actor, accion, objeto, detalle) VALUES ('sistema', 'semilla', 'demo', '{"nota":"datos de demostración cargados"}')`);
 }

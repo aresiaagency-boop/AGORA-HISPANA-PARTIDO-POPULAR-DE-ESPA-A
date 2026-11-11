@@ -6,6 +6,7 @@ import { firmaBaja } from '@/lib/auth';
 import { exigirPublico } from '@/lib/guardias';
 import { NOMBRE, ROTULO } from '@/lib/modo';
 import { FINALIDADES } from '@/lib/textos';
+import BarraNav from '@/components/BarraNav';
 import ChatPepe from '@/components/ChatPepe';
 import Logo from '@/components/Logo';
 import MarcaPartido from '@/components/MarcaPartido';
@@ -41,20 +42,23 @@ export default async function MiEspacio() {
   return (
     <main className="publico" style={{ placeItems: 'start center' }}>
       <div className="caja pila" style={{ width: 'min(680px, 100%)' }}>
+        <BarraNav salir />
         <section className="panel"><div className="panel-cuerpo">
           <div className="linea" style={{ justifyContent: 'space-between' }}><div className="marca"><Logo />{NOMBRE}</div><MarcaPartido /></div>
           {ROTULO && <span className="rotulo">{ROTULO}</span>}
           <h1>Hola, {String(p.nombre).split(' ')[0]}</h1>
           <div className="progreso" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label="Tu participación"><i style={{ width: `${pct}%` }} /></div>
           <p className="tenue mono">Tu participación · {pct} %</p>
+          {p.estado === 'pendiente' && <p className="nota aviso">Tu perfil está pendiente de aprobación por Dirección. Te avisaremos cuando esté activo.</p>}
+          {p.estado === 'rechazado' && <p className="nota error">Tu solicitud no ha sido aprobada. Puedes escribir a PEPE si crees que es un error.</p>}
         </div></section>
 
-        <section className="panel"><div className="panel-cab"><h3>Qué puedes hacer</h3></div><div className="panel-cuerpo pila">
+        {p.estado === 'aprobado' && <section className="panel"><div className="panel-cab"><h3>Qué puedes hacer</h3></div><div className="panel-cuerpo pila">
           {pasos.map(([t, d, href, ok], i) => (
             <Link key={t} href={href} className="paso"><span className="mono n">{ok ? '✓' : i + 1}</span><span><b>{t}</b><br /><span className="tenue">{d}</span></span></Link>
           ))}
           <p className="tenue">Nada de esto está condicionado a afiliarte, y afiliarte no da premios ni servicios.</p>
-        </div></section>
+        </div></section>}
 
         <section className="panel" id="pepe"><div className="panel-cab"><h3>Habla con PEPE</h3><span className="meta">asistente de IA</span></div><div className="panel-cuerpo pila">
           <ChatPepe sugerencias={['¿Puedo votar?', '¿Qué cambia con la nacionalidad?', 'Tengo una propuesta']} />

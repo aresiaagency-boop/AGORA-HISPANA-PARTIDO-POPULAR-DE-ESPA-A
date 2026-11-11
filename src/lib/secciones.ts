@@ -23,6 +23,14 @@ const op = (codigo: string, nombre: string, hace: string, payload: Record<string
 export const SECCIONES: Seccion[] = [
   { codigo: '00', slug: '', nombre: 'Mission Control', sub: 'Estado en tiempo real', agente: 'PEPE', alcance: 'Completa', ops: [] },
   {
+    codigo: '22', slug: 'afiliados', nombre: 'Afiliados VIP', sub: 'Aprobación y gestión de cada perfil', agente: 'Dirección', alcance: 'Completa',
+    ops: [
+      op('05.04', 'Aprobar o rechazar', 'Decide si un perfil nuevo entra. Queda registrado quién lo decidió.', { persona_id: '', decision: 'aprobar' }, 'Humano'),
+      op('05.05', 'Editar perfil', 'Corrige nombre, municipio, origen o teléfono.', { persona_id: '', nombre: '' }),
+      op('05.06', 'Borrar perfil', 'Elimina el perfil, sus consentimientos y sus firmas. No se puede deshacer.', { persona_id: '' }, 'Irreversible'),
+    ],
+  },
+  {
     codigo: '01', slug: 'programa', nombre: 'Programa', sub: 'Políticas explicadas y fuentes', agente: 'Programa', alcance: 'Completa',
     ops: [op('01.05', 'Responder consulta', 'Busca en las fichas verificadas y contesta con su fuente.', { pregunta: '¿Qué cambia con la nacionalidad?' }, 'Solo fichas publicadas')],
   },

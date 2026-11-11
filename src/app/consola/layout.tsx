@@ -4,6 +4,7 @@ import { MODO, NOMBRE, ROTULO } from '@/lib/modo';
 import { SECCIONES } from '@/lib/secciones';
 import Menu from '@/components/Menu';
 import Logo from '@/components/Logo';
+import { BotonAtras } from '@/components/BarraNav';
 import MarcaPartido from '@/components/MarcaPartido';
 
 export const dynamic = 'force-dynamic';
@@ -17,6 +18,7 @@ export default async function Consola({ children }: { children: React.ReactNode 
         <div className="marca"><Logo />{NOMBRE}</div>
         <MarcaPartido />
         {ROTULO && <span className="rotulo">{ROTULO}</span>}
+        <BotonAtras />
         <span className="hueco" />
         <span className="quien">{s.nombre} · {s.rol}</span>
         <form method="post" action="/api/auth/salir"><button className="boton">Salir</button></form>

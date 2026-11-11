@@ -59,6 +59,40 @@ export const MANEJADORES: Record<string, Manejador> = {
       FROM personas p ORDER BY p.creada`),
   }),
 
+  '05.04': async (p, ctx) => {
+    const per = await uno('SELECT id FROM personas WHERE id = $1', [String(p.persona_id)]);
+    exigir(per, 'No existe ese perfil.');
+    const estado = p.decision === 'aprobar' ? 'aprobado' : 'rechazado';
+    await q('UPDATE personas SET estado = $1, aprobado_por = $2, aprobado_en = now() WHERE id = $3', [estado, ctx.actor, per.id]);
+    await q(`INSERT INTO aprobaciones (tipo, ref_id, decision, motivo, actor) VALUES ('afiliado', 0, $1, $2, $3)`, [estado, String(per.id), ctx.actor]);
+    await auditar(ctx.actor, estado === 'aprobado' ? 'aprobar' : 'rechazar', 'comunidad', { persona: per.id });
+    return { persona_id: per.id, estado };
+  },
+
+  '05.05': async (p, ctx) => {
+    const per = await uno('SELECT * FROM personas WHERE id = $1', [String(p.persona_id)]);
+    exigir(per, 'No existe ese perfil.');
+    const nombre = String(p.nombre ?? per.nombre).trim();
+    exigir(nombre.length >= 3, 'El nombre no puede quedar vacío.');
+    await q('UPDATE personas SET nombre = $1, municipio = $2, pais_origen = $3, telefono = $4 WHERE id = $5', [
+      nombre, p.municipio === undefined ? per.municipio : p.municipio || null, p.pais_origen === undefined ? per.pais_origen : p.pais_origen || null,
+      p.telefono === undefined ? per.telefono : String(p.telefono).replace(/[^\d+ ]/g, '').slice(0, 20) || null, per.id,
+    ]);
+    await auditar(ctx.actor, 'editar', 'comunidad', { persona: per.id });
+    return { persona_id: per.id, estado: 'actualizado' };
+  },
+
+  '05.06': async (p, ctx) => {
+    const per = await uno('SELECT id FROM personas WHERE id = $1', [String(p.persona_id)]);
+    exigir(per, 'No existe ese perfil.');
+    await q('UPDATE personas SET invitado_por = NULL WHERE invitado_por = $1', [per.id]);
+    await q('DELETE FROM consentimientos WHERE persona_id = $1', [per.id]);
+    await q('DELETE FROM firmas WHERE persona_id = $1', [per.id]);
+    await q('DELETE FROM personas WHERE id = $1', [per.id]);
+    await auditar(ctx.actor, 'borrar', 'comunidad', { persona: per.id });
+    return { estado: 'borrado' };
+  },
+
   '05.03': async (p, ctx) => {
     const persona = await uno('SELECT id FROM personas WHERE email = $1', [String(p.email ?? '').toLowerCase()]);
     exigir(persona, 'No hay nadie registrado con ese correo.');
@@ -213,7 +247,7 @@ export const MANEJADORES: Record<string, Manejador> = {
     const c = await uno('SELECT * FROM correos WHERE id = $1', [Number(p.correo_id)]);
     exigir(c?.estado === 'aprobado', 'Solo se envían correos aprobados por una persona.');
     const consentidos = await q<{ email: string }>(
-      `SELECT p.email FROM personas p WHERE p.baja IS NULL AND (
+      `SELECT p.email FROM personas p WHERE p.baja IS NULL AND p.estado = 'aprobado' AND (
          SELECT c.otorgado FROM consentimientos c WHERE c.persona_id = p.id AND c.finalidad = 'comunicaciones_politicas' ORDER BY c.id DESC LIMIT 1)`,
     );
     const destino = esDemo ? listaPrueba() : consentidos.map((x) => x.email);

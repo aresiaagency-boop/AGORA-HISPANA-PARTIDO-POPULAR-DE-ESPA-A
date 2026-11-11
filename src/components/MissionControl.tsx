@@ -290,7 +290,7 @@ export default function MissionControl({ inicial }: { inicial: EstadoVivo }) {
         <section className="panel"><div className="panel-cab"><h3>Embudo de usuarios</h3><span className="meta">{e.bajas} bajas</span></div>
           <div className="panel-cuerpo pila">
             {e.embudo.map((x) => <div key={x.etapa} className="embudo-fila"><span>{x.etapa}</span><b>{x.n}</b><div className="medidor"><i style={{ width: `${(x.n / maxEmbudo) * 100}%` }} /></div></div>)}
-            <Link href="/consola/comunidad" className="tenue">Gestionar perfiles</Link>
+            <Link href="/consola/afiliados">Gestionar afiliados VIP</Link>
           </div></section>
       </div>
 
@@ -350,7 +350,7 @@ export default function MissionControl({ inicial }: { inicial: EstadoVivo }) {
           <div className="panel-cuerpo">
             <div className="pepe-log" aria-live="polite">
               {e.pendientes.map((p) => (
-                <div key={`${p.tipo}${p.id}`} className="el"><span className="chip c-pendiente">{p.tipo.toUpperCase()} {p.id}</span> {p.titulo} · <Link href={`/consola/${p.tipo === 'pieza' ? 'estudio-viral' : 'correo'}`}>Revisar</Link></div>
+                <div key={`${p.tipo}${p.id}`} className="el"><span className="chip c-pendiente">{p.tipo.toUpperCase()} {p.id}</span> {p.titulo} · <Link href={`/consola/${p.tipo === 'pieza' ? 'estudio-viral' : p.tipo === 'afiliado' ? 'afiliados' : 'correo'}`}>Revisar</Link></div>
               ))}
               {log.map((l, i) => (
                 <div key={i} style={{ display: 'grid', gap: 6 }}><div className="yo">{l.yo}</div>{l.el && <div className="el">{l.el}{l.via && <small>{l.via}</small>}</div>}</div>

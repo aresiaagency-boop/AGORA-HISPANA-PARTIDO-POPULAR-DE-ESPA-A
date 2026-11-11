@@ -11,6 +11,7 @@ import type { Seccion } from '@/lib/secciones';
 import Accion from '@/components/Accion';
 import ChatPepe from '@/components/ChatPepe';
 import FormVoto from '@/components/FormVoto';
+import FichaAfiliado from '@/components/FichaAfiliado';
 
 const fecha = new Intl.DateTimeFormat('es-ES', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Madrid' });
 const ETQ: Record<string, string> = { conectado: 'EN LÍNEA', sesion_agente: 'SESIÓN DE AGENTE', pendiente: 'PENDIENTE', apagado: 'APAGADO', caducada: 'CADUCADA' };
@@ -78,6 +79,22 @@ async function Comunidad() {
         </Panel>
       </div>
     </>
+  );
+}
+
+async function Afiliados() {
+  const filas = await q(`SELECT p.*, (SELECT string_agg(x.finalidad, ', ') FROM (SELECT DISTINCT ON (finalidad) finalidad, otorgado FROM consentimientos WHERE persona_id = p.id ORDER BY finalidad, id DESC) x WHERE x.otorgado) AS finalidades,
+    (SELECT count(*)::int FROM firmas f WHERE f.persona_id = p.id) AS firmas, (SELECT count(*)::int FROM personas i WHERE i.invitado_por = p.id) AS invitados
+    FROM personas p ORDER BY (p.estado = 'pendiente') DESC, p.creada DESC`);
+  const pend = filas.filter((f) => f.estado === 'pendiente' && !f.baja).length;
+  return (
+    <Panel titulo="Afiliados VIP" meta={`${pend} esperan aprobación · ${filas.length} en total`}>
+      <p className="nota">Quien se registra con Google queda en espera hasta que Dirección lo aprueba. Mientras tanto no recibe comunicaciones ni ve su espacio completo.</p>
+      {filas.map((f) => (
+        <FichaAfiliado key={f.id} p={{ id: f.id, nombre: f.nombre, email: f.email, municipio: f.municipio, pais_origen: f.pais_origen, telefono: f.telefono, estado: f.estado, baja: !!f.baja, es_demo: f.es_demo,
+          finalidades: f.finalidades, interes: f.interes_afiliacion, firmas: f.firmas, invitados: f.invitados, alta: fecha.format(new Date(f.creada)), aprobado_por: f.aprobado_por }} />
+      ))}
+    </Panel>
   );
 }
 
@@ -247,7 +264,7 @@ const PREVISTO: Record<string, string> = {
 export const VISTAS: Record<string, (p: { s: Seccion }) => Promise<React.ReactNode> | React.ReactNode> = {
   programa: () => <Programa />, 'mi-camino': () => <MiCamino />, comunidad: () => <Comunidad />, correo: () => <Correo />, pepe: () => <Pepe />,
   embajadores: () => <Embajadores />, configuracion: () => <Configuracion />, agenda: () => <Agenda />, mediateca: () => <Mediateca />,
-  voz: () => <Propuestas estado="recibida" titulo="Propuestas de la comunidad" />, atencion: () => <Propuestas estado="escalada" titulo="Escaladas a una persona" />, analitica: () => <Analitica />, cumplimiento: () => <Cumplimiento />,
+  voz: () => <Propuestas estado="recibida" titulo="Propuestas de la comunidad" />, atencion: () => <Propuestas estado="escalada" titulo="Escaladas a una persona" />, analitica: () => <Analitica />, cumplimiento: () => <Cumplimiento />, afiliados: () => <Afiliados />,
 };
 
 export function Prevista({ s }: { s: Seccion }) {

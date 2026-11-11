@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { authLista, claveListo, esEquipo, googleListo, sesion } from '@/lib/auth';
 import { NOMBRE, ROTULO } from '@/lib/modo';
 import Logo from '@/components/Logo';
+import BarraNav from '@/components/BarraNav';
 import MarcaPartido from '@/components/MarcaPartido';
 
 export const dynamic = 'force-dynamic';
@@ -22,6 +23,7 @@ export default async function Entrar({ searchParams }: { searchParams: Promise<{
     <main className="publico">
       <div className="caja panel">
         <div className="panel-cuerpo">
+          <BarraNav salir={false} />
           <div className="linea" style={{ justifyContent: 'space-between' }}><div className="marca"><Logo />{NOMBRE}</div><MarcaPartido /></div>
           {ROTULO && <span className="rotulo">{ROTULO}</span>}
           <h1>Acceso del equipo</h1>

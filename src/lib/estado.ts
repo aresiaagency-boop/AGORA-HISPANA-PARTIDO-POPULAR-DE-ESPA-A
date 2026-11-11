@@ -65,6 +65,7 @@ export async function estadoVivo(): Promise<EstadoVivo> {
 
   const piezas = await q<{ id: number; titulo: string }>(`SELECT id, titulo FROM piezas WHERE estado = 'pendiente_aprobacion' ORDER BY id`);
   const correos = await q<{ id: number; asunto: string }>(`SELECT id, asunto FROM correos WHERE estado = 'borrador' ORDER BY id`);
+  const nuevos = await q<{ id: string; nombre: string }>(`SELECT id, nombre FROM personas WHERE estado = 'pendiente' AND baja IS NULL ORDER BY creada`);
   const act = await q<{ id: number; actor: string; accion: string; objeto: string; creada: Date }>('SELECT id, actor, accion, objeto, creada FROM registro_auditoria ORDER BY id DESC LIMIT 9');
 
   return {
@@ -75,7 +76,7 @@ export async function estadoVivo(): Promise<EstadoVivo> {
       consentimientos: await n('SELECT count(*)::int AS n FROM consentimientos WHERE otorgado'),
       senales: await n('SELECT count(*)::int AS n FROM senales'),
       oportunidades: await n(`SELECT count(*)::int AS n FROM oportunidades WHERE estado = 'producir'`),
-      pendientes: piezas.length + correos.length,
+      pendientes: piezas.length + correos.length + nuevos.length,
       publicaciones: await n('SELECT count(*)::int AS n FROM publicaciones'),
       correos: await n('SELECT count(*)::int AS n FROM correos'),
       conversaciones: await n('SELECT count(*)::int AS n FROM conversaciones'),
@@ -85,11 +86,12 @@ export async function estadoVivo(): Promise<EstadoVivo> {
     conexiones,
     actividad: act.map((a) => ({ ...a, creada: new Date(a.creada).toISOString() })),
     pulso: { pepe: ev('pepe'), estudio: ev('estudio-viral') + ev('higgsfield') + ev('instagram') + ev('facebook') + ev('tiktok'), total: eventos.reduce((a, e) => a + e.n, 0) },
-    pendientes: [...piezas.map((p) => ({ tipo: 'pieza', id: p.id, titulo: p.titulo })), ...correos.map((c) => ({ tipo: 'correo', id: c.id, titulo: c.asunto }))],
+    pendientes: [...nuevos.map((x, i) => ({ tipo: 'afiliado', id: i + 1, titulo: x.nombre })), ...piezas.map((p) => ({ tipo: 'pieza', id: p.id, titulo: p.titulo })), ...correos.map((c) => ({ tipo: 'correo', id: c.id, titulo: c.asunto }))],
     radar: (await q<{ multiplicador: number }>('SELECT multiplicador FROM senales ORDER BY multiplicador DESC')).map((s) => s.multiplicador),
     puntuaciones: (await q<{ puntuacion: number }>('SELECT puntuacion FROM oportunidades ORDER BY puntuacion DESC')).map((o) => o.puntuacion),
     embudo: [
       { etapa: 'Perfiles creados', n: await n('SELECT count(*)::int AS n FROM personas WHERE baja IS NULL') },
+      { etapa: 'Aprobados por Dirección', n: await n(`SELECT count(*)::int AS n FROM personas WHERE baja IS NULL AND estado = 'aprobado'`) },
       { etapa: 'Aceptan comunicaciones', n: await n(`SELECT count(*)::int AS n FROM personas p WHERE p.baja IS NULL AND (SELECT c.otorgado FROM consentimientos c WHERE c.persona_id = p.id AND c.finalidad = 'comunicaciones_politicas' ORDER BY c.id DESC LIMIT 1)`) },
       { etapa: 'Voluntariado', n: await n(`SELECT count(*)::int AS n FROM personas p WHERE p.baja IS NULL AND (SELECT c.otorgado FROM consentimientos c WHERE c.persona_id = p.id AND c.finalidad = 'voluntariado' ORDER BY c.id DESC LIMIT 1)`) },
       { etapa: 'Interés en afiliarse', n: await n('SELECT count(*)::int AS n FROM personas WHERE baja IS NULL AND interes_afiliacion') },

@@ -1,6 +1,7 @@
 // Punto de información de cada sección: qué es y qué hace, en dos frases.
 export const INFO: Record<string, [string, string]> = {
   '': ['El tablero central del sistema.', 'Muestra en vivo las diez conexiones, el embudo de usuarios, lo que espera aprobación y la actividad. Tocar un nodo abre su detalle.'],
+  afiliados: ['El registro de afiliados VIP.', 'Cada persona que se registra aparece aquí en espera. Dirección la aprueba o la rechaza, ve todos sus datos y consentimientos, y puede editarla, darla de baja o borrarla.'],
   programa: ['La biblioteca de fichas verificadas.', 'Cada ficha explica una ley o una propuesta, cómo afecta hoy y su fuente. PEPE y el Estudio Viral solo pueden afirmar lo que está aquí.'],
   'mi-camino': ['El comprobador «¿Puedo votar?».', 'Con cuatro respuestas calcula si la persona vota, qué trámite necesita y hasta cuándo, según las reglas del INE.'],
   'punto-qr': ['Códigos QR para actos y comercios.', 'Llevarán al comprobador de voto y al alta, y medirán qué punto trae más gente. Prevista.'],
