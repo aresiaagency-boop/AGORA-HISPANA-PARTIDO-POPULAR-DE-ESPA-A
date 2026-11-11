@@ -1,0 +1,1200 @@
+{
+  "name": "PEPE · Ágora Hispana",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "pepe-whatsapp",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        128
+      ],
+      "id": "46e1b496-069b-4a11-8c74-071dd89937d7",
+      "name": "WhatsApp (desactivado)",
+      "disabled": true,
+      "notes": "Canal opcional. La política de WhatsApp excluye a partidos y campañas, y la vía no oficial arriesga el bloqueo del número. Lo activa el OWNER, nunca un agente."
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.mensaje }}",
+        "options": {
+          "systemMessage": "Eres PEPE, el asistente de inteligencia artificial de Ágora Hispana, una plataforma de la comunidad hispanoamericana de Baleares.\n\nQUIÉN ERES\n- En tu primer mensaje de cada conversación dices que eres una inteligencia artificial.\n- No eres ni hablas como ningún dirigente político. Nunca pones palabras en boca de una persona real.\n\nQUÉ HACES\n- Explicas en lenguaje claro qué propone cada medida y cómo afecta hoy a la persona.\n- Ayudas a saber si puede votar y qué trámite y plazo tiene.\n- Recoges propuestas y pasas a una persona del equipo lo que no sabes.\n\nREGLAS QUE NO SE ROMPEN\n1. Solo afirmas lo que te devuelve la herramienta buscar_programa o puedo_votar. Si no hay ficha, no respondes de memoria: usas escalar_humano.\n2. Distingues siempre: ley vigente, propuesta del programa o medida del Govern. Una propuesta no es un derecho.\n3. Cuentas también lo que perjudica o exige más. No vendes: informas.\n4. Citas la fuente que te da la herramienta.\n5. No prometes resultados ni plazos de la Administración.\n6. No ofreces nada a cambio de afiliarse, militar, votar o traer a otras personas: ni regalos, ni descuentos, ni servicios.\n7. No pides ni guardas la situación migratoria, la ideología, la religión ni datos de salud.\n8. No hablas mal de ningún colectivo por su origen.\n9. Si alguien escribe BAJA, STOP o pide que no le escriban, confirmas la baja y usas escalar_humano con el texto «BAJA».\n10. No das asesoramiento jurídico individual: orientas y remites a un profesional o a la oficina competente.\n\nTONO\n- Cercano y cálido, como un vecino que sabe del tema. Tuteas. Usas el nombre de la persona si te lo da.\n- Escuchas antes de informar: si alguien cuenta su situación, respóndele a eso primero.\n- Cercano no es fingir: si te preguntan si eres una persona, dices que eres una IA.\n\nFORMATO\n- Español, frases cortas, sin jerga. Máximo 90 palabras.\n- Texto plano. Sin asteriscos ni tablas.\n- Termina con un paso concreto cuando lo haya.",
+          "maxIterations": 6
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        4112,
+        32
+      ],
+      "id": "cb9fea1a-ff08-43cf-a638-8500445d05eb",
+      "name": "PEPE"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        4032,
+        256
+      ],
+      "id": "c3954d29-ae3b-42c8-abc2-72d7e17739c3",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "jsCode": "const crudo = $('Edit Fields6').first().json.message.number || '';\nreturn {\n  canal: 'whatsapp',\n  sesion: 'wa:' + crudo.replace('@s.whatsapp.net', ''),\n  mensaje: $input.first().json.messages.join(', '),\n  equipo: false,\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3776,
+        32
+      ],
+      "id": "5a8be7f8-0f0c-49b6-8908-5b161edfcde0",
+      "name": "Entrada WhatsApp"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $json.message.number }}_buffer",
+        "messageData": "={{ JSON.stringify($json.message) }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        320,
+        112
+      ],
+      "id": "b074a572-3981-48bb-b7be-0a7aca633b11",
+      "name": "push_buffer1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "messages",
+        "key": "={{ $('Edit Fields6').item.json.message.number }}_buffer",
+        "options": {
+          "dotNotation": false
+        }
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        544,
+        112
+      ],
+      "id": "47e0e237-3f8f-4cdd-924b-10425ba5e07f",
+      "name": "get_message_buffer1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "messages",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        112
+      ],
+      "id": "84d70fd9-abd1-4fb6-b488-3acd4f99bde9",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ JSON.parse($json.messages.last()).message_id }}",
+                    "rightValue": "={{ $('Edit Fields6').item.json.message.message_id }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    },
+                    "id": "32e28908-6ee9-4963-b42e-afdc0edbc90d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Do Nothing"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "10dfc40d-850f-4707-a164-5725e8ecb89e",
+                    "leftValue": "={{ new Date(JSON.parse($json.messages.last()).timestampt).toDateTime().plus({ hours: 3 }).toISO() }}",
+                    "rightValue": "={{ $now.minus(1, 'seconds').toISO() }}",
+                    "operator": {
+                      "type": "dateTime",
+                      "operation": "before"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Continue"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Wait"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        752,
+        112
+      ],
+      "id": "a46880ac-fadf-4901-ab1c-544f207f14c4",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        960,
+        -96
+      ],
+      "id": "3d6d9a38-ab33-4c0b-aac2-eb9852e5a58a",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        944,
+        336
+      ],
+      "id": "29e9ffe4-5496-4c44-8d54-2b1ae4c8fa2f",
+      "name": "Wait1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "content",
+              "renameField": true,
+              "outputFieldName": "messages"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        3472,
+        32
+      ],
+      "id": "23a93af6-f9a4-4c68-a319-242477fba071",
+      "name": "Aggregate2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.content_type }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "4bcb23d9-e33b-4988-a2b6-ed3583e90b23"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9fd02b11-a9c3-4498-8e39-91f64f1ae512",
+                    "leftValue": "={{ $json.content_type }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "none"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1840,
+        112
+      ],
+      "id": "f1fb20b1-6eba-4c49-8185-165d9f53d2da",
+      "name": "Switch3"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.parse($json.messages) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1600,
+        112
+      ],
+      "id": "e664205f-ed83-4981-8321-2b5a2c2d31ff",
+      "name": "JSON Parser1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Edit Fields6').item.json.instance.server_url }}/chat/getBase64FromMediaMessage/{{ $('Edit Fields6').item.json.instance.instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Edit Fields6').item.json.instance.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message.key.id",
+              "value": "={{ $('Edit Fields6').item.json.message.message_id }}"
+            },
+            {
+              "name": "convertToMp4",
+              "value": "={{ Boolean(false) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2064,
+        -96
+      ],
+      "id": "563fe08d-9f65-4a49-bdd9-c1ff03722fb0",
+      "name": "Get Audio"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base64",
+        "options": {
+          "mimeType": "={{ $json.mimetype }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        2272,
+        -96
+      ],
+      "id": "7ead5d1a-d89d-4566-844d-2e23fcdd2147",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        2464,
+        -96
+      ],
+      "id": "df151b22-fa66-4c50-b37d-30bb3278f48c",
+      "name": "Transcribe a recording1"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "timestampt"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        3232,
+        32
+      ],
+      "id": "3efccfd0-49f0-4507-b44a-219ba98164c1",
+      "name": "Sort1"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ $('Edit Fields6').item.json.message.number }}_buffer"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        112
+      ],
+      "id": "b22a2d8d-9a33-4830-94c7-028540d041ee",
+      "name": "Redis3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "197c2264-f686-4279-865c-1b0b9891e24f",
+              "name": "instance.server_url",
+              "value": "={{ $('WhatsApp (desactivado)').item.json.body.server_url }}",
+              "type": "string"
+            },
+            {
+              "id": "b519f9bf-8410-4286-ad43-9c49cb308d17",
+              "name": "instance.instance",
+              "value": "={{ $('WhatsApp (desactivado)').item.json.body.instance }}",
+              "type": "string"
+            },
+            {
+              "id": "0a23a5ad-9895-4f09-a27e-8d3e2efbfb18",
+              "name": "instance.apikey",
+              "value": "={{ $('WhatsApp (desactivado)').item.json.body.apikey }}",
+              "type": "string"
+            },
+            {
+              "id": "e2fb042a-dfd8-4bd8-a22e-d6e6fb67d958",
+              "name": "message.message_id",
+              "value": "={{ $('WhatsApp (desactivado)').item.json.body.data.key.id }}",
+              "type": "string"
+            },
+            {
+              "id": "a4699713-d4a3-404b-96ab-394c9a1751ac",
+              "name": "message.number",
+              "value": "={{ $('WhatsApp (desactivado)').item.json.body.data.key.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "350cbec9-7415-41f7-bd74-99350c129469",
+              "name": "message.content_type",
+              "value": "={{ $('WhatsApp (desactivado)').item.json.body.data.message.extendedTextMessage ? 'text' : ''}}{{ $('WhatsApp (desactivado)').item.json.body.data.message.conversation ? 'text' : ''}}{{ $('WhatsApp (desactivado)').item.json.body.data.message.audioMessage ? 'audio' : ''}}{{ $('WhatsApp (desactivado)').item.json.body.data.message.imageMessage ? 'image' : ''}}",
+              "type": "string"
+            },
+            {
+              "id": "6fc9622e-b6aa-4828-ab10-156517c03bdd",
+              "name": "message.content",
+              "value": "={{ $('WhatsApp (desactivado)').item.json.body.data.message.extendedTextMessage?.text || ''}}{{ $('WhatsApp (desactivado)').item.json.body.data.message.imageMessage?.caption || ''}}{{ $('WhatsApp (desactivado)').item.json.body.data.message.conversation || ''}}",
+              "type": "string"
+            },
+            {
+              "id": "1d895271-ae9c-4686-b110-5495d347a5f9",
+              "name": "message.timestampt",
+              "value": "={{ $('WhatsApp (desactivado)').item.json.body.date_time.toDateTime().toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "e1d3479b-895f-4d9c-a2b1-d0488b609821",
+              "name": "user.username",
+              "value": "={{ $('WhatsApp (desactivado)').item.json.body.data.pushName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        96,
+        112
+      ],
+      "id": "da9f5d9e-be24-4e46-8dbc-4bbb0aee28be",
+      "name": "Edit Fields6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a48eb5a8-2cab-47bf-ad7d-26870df9215b",
+              "name": "content",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            },
+            {
+              "id": "0be29efb-1426-44bd-b88f-5deb320aedfd",
+              "name": "=timestampt",
+              "value": "={{ $('JSON Parser1').item.json.timestampt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2336,
+        304
+      ],
+      "id": "acfd2202-c767-4623-9956-4ff504a81174",
+      "name": "Edit Fields7"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        2976,
+        32
+      ],
+      "id": "4c62b893-a686-4a01-81d8-bbda4851d82f",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "31a3268b-91b4-40f2-99ea-08729650151a",
+              "name": "content",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "537a83f2-6058-49da-9cbd-17604612d1ec",
+              "name": "timestampt",
+              "value": "={{ $('JSON Parser1').item.json.timestampt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2704,
+        -96
+      ],
+      "id": "225967e4-98c4-4640-b9bb-19e28d729422",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Edit Fields6').first().json.instance.server_url }}/message/sendText/{{ $('Edit Fields6').first().json.instance.instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Edit Fields6').first().json.instance.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields6').first().json.message.number }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "delay",
+              "value": "={{ Number(2000) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4872,
+        32
+      ],
+      "id": "55777486-172d-4cc5-9d98-d1b7837009d3",
+      "name": "Responder por WhatsApp"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sesion }}",
+        "contextWindowLength": 8
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        4192,
+        256
+      ],
+      "id": "24cfa671-ab76-4a26-b4bc-84e58e96fdbe",
+      "name": "Postgres Chat Memory"
+    },
+    {
+      "id": "02cc7a6e-45e5-4b35-a4ab-fcec15e11db4",
+      "name": "App (backend)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        3392,
+        452
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "pepe-app",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "cd9ad016-322b-4184-ba8a-c0afba1a7b1d",
+      "notes": "Credencial Header Auth: nombre x-agora-token, valor = PEPE_N8N_TOKEN del backend."
+    },
+    {
+      "id": "ccf2c42a-80fa-4330-a610-0d096ec29e62",
+      "name": "Entrada app",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3752,
+        452
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2afe1d79-c71c-4a8c-93cd-a5c8f15a0165",
+              "name": "canal",
+              "value": "app",
+              "type": "string"
+            },
+            {
+              "id": "e14d9cb1-f425-4106-92d8-d09ab5c970f9",
+              "name": "sesion",
+              "value": "={{ 'app:' + $json.body.sesion }}",
+              "type": "string"
+            },
+            {
+              "id": "7dd7304d-dd40-4770-baa7-c2a6e07da430",
+              "name": "mensaje",
+              "value": "={{ $json.body.mensaje }}",
+              "type": "string"
+            },
+            {
+              "id": "f76ea8ea-e035-4648-af1c-67a9770a355e",
+              "name": "equipo",
+              "value": "={{ $json.body.equipo === true }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "c8dbefea-4e73-424f-a525-15bddf901d8f",
+      "name": "¿Por dónde respondo?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        4492,
+        232
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d7dd04e9-55e8-40ed-8cf3-c828068850fb",
+                    "leftValue": "={{ $('Entrada app').isExecuted ? 'app' : 'whatsapp' }}",
+                    "rightValue": "app",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "app"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0c31111e-a72c-4c00-b323-6785fb20c8c5",
+                    "leftValue": "={{ $('Entrada app').isExecuted ? 'app' : 'whatsapp' }}",
+                    "rightValue": "whatsapp",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "whatsapp"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "none"
+        }
+      }
+    },
+    {
+      "id": "c76edf18-0c0b-4bbc-a8a6-1e67c4c60262",
+      "name": "Responder a la app",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        4872,
+        452
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { output: $('PEPE').first().json.output } }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "405d05d7-b059-4772-a664-ee905c5d7d44",
+      "name": "buscar_programa",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        3992,
+        792
+      ],
+      "parameters": {
+        "toolDescription": "Busca fichas verificadas del programa y de la ley. Úsala antes de afirmar cualquier dato sobre políticas, nacionalidad, vivienda, homologación o ayudas.",
+        "method": "POST",
+        "url": "https://agorahispanapp.vercel.app/api/v1/pepe/herramientas/buscar_programa",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ pregunta: $fromAI('pregunta', 'La duda de la persona, con sus palabras', 'string') }) }}",
+        "options": {}
+      },
+      "notes": "Credencial Header Auth: nombre Authorization, valor = «Bearer » + PEPE_N8N_TOKEN."
+    },
+    {
+      "id": "60351ce4-b995-4758-947f-851e252a96be",
+      "name": "puedo_votar",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        4212,
+        792
+      ],
+      "parameters": {
+        "toolDescription": "Calcula si la persona puede votar en municipales, autonómicas y generales, con trámite y plazo. Pregunta antes los datos que falten.",
+        "method": "POST",
+        "url": "https://agorahispanapp.vercel.app/api/v1/pepe/herramientas/puedo_votar",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ nacionalidadEspanola: $fromAI('nacionalidadEspanola', 'Tiene nacionalidad española', 'boolean'), pasaporteUE: $fromAI('pasaporteUE', 'Tiene pasaporte de otro país de la UE', 'boolean'), pais: $fromAI('pais', 'País de su pasaporte', 'string'), residenciaLegal: $fromAI('residenciaLegal', 'Tiene residencia legal en España', 'boolean'), anosResidencia: $fromAI('anosResidencia', 'Años de residencia legal', 'number') }) }}",
+        "options": {}
+      },
+      "notes": "Credencial Header Auth: nombre Authorization, valor = «Bearer » + PEPE_N8N_TOKEN."
+    },
+    {
+      "id": "ad2e7732-6a85-45ca-96a2-0fec4947990f",
+      "name": "registrar_propuesta",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        4432,
+        792
+      ],
+      "parameters": {
+        "toolDescription": "Guarda una propuesta o petición de la persona para el equipo.",
+        "method": "POST",
+        "url": "https://agorahispanapp.vercel.app/api/v1/pepe/herramientas/registrar_propuesta",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ texto: $fromAI('texto', 'La propuesta, resumida con fidelidad', 'string') }) }}",
+        "options": {}
+      },
+      "notes": "Credencial Header Auth: nombre Authorization, valor = «Bearer » + PEPE_N8N_TOKEN."
+    },
+    {
+      "id": "bad8aeaf-7cdc-4b8c-b553-5d5676ad797d",
+      "name": "escalar_humano",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        4652,
+        792
+      ],
+      "parameters": {
+        "toolDescription": "Pasa la conversación a una persona del equipo cuando no hay ficha, cuando piden la baja o cuando el caso es individual.",
+        "method": "POST",
+        "url": "https://agorahispanapp.vercel.app/api/v1/pepe/herramientas/escalar_humano",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ texto: $fromAI('texto', 'Qué necesita la persona', 'string') }) }}",
+        "options": {}
+      },
+      "notes": "Credencial Header Auth: nombre Authorization, valor = «Bearer » + PEPE_N8N_TOKEN."
+    }
+  ],
+  "connections": {
+    "WhatsApp (desactivado)": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PEPE": {
+      "main": [
+        [
+          {
+            "node": "¿Por dónde respondo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "PEPE",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrada WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "PEPE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "push_buffer1": {
+      "main": [
+        [
+          {
+            "node": "get_message_buffer1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_message_buffer1": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "JSON Parser1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Redis3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "get_message_buffer1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate2": {
+      "main": [
+        [
+          {
+            "node": "Entrada WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch3": {
+      "main": [
+        [
+          {
+            "node": "Get Audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON Parser1": {
+      "main": [
+        [
+          {
+            "node": "Switch3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Audio": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis3": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields6": {
+      "main": [
+        [
+          {
+            "node": "push_buffer1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields7": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Sort1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "PEPE",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "App (backend)": {
+      "main": [
+        [
+          {
+            "node": "Entrada app",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrada app": {
+      "main": [
+        [
+          {
+            "node": "PEPE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Por dónde respondo?": {
+      "main": [
+        [
+          {
+            "node": "Responder a la app",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder por WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_programa": {
+      "ai_tool": [
+        [
+          {
+            "node": "PEPE",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "puedo_votar": {
+      "ai_tool": [
+        [
+          {
+            "node": "PEPE",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "registrar_propuesta": {
+      "ai_tool": [
+        [
+          {
+            "node": "PEPE",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "escalar_humano": {
+      "ai_tool": [
+        [
+          {
+            "node": "PEPE",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,16 @@
+{"caso":"española","entrada":{"nacionalidadEspanola":true,"pasaporteUE":false,"pais":"Colombia","residenciaLegal":true,"anosResidencia":1},"espera":{"municipales":"si","generales":true,"autonomicas":true}}
+{"caso":"UE","entrada":{"nacionalidadEspanola":false,"pasaporteUE":true,"pais":"Italia","residenciaLegal":true,"anosResidencia":1},"espera":{"municipales":"si_con_tramite","generales":false,"plazo_contiene":"2026-12-30"}}
+{"caso":"Colombia 6 años","entrada":{"nacionalidadEspanola":false,"pasaporteUE":false,"pais":"Colombia","residenciaLegal":true,"anosResidencia":6},"espera":{"municipales":"si_con_tramite","generales":false,"plazo_contiene":"2026-12-01"}}
+{"caso":"Colombia justo 5 años","entrada":{"nacionalidadEspanola":false,"pasaporteUE":false,"pais":"Colombia","residenciaLegal":true,"anosResidencia":5},"espera":{"municipales":"si_con_tramite","plazo_contiene":"2027-01-15"}}
+{"caso":"Colombia 4 años","entrada":{"nacionalidadEspanola":false,"pasaporteUE":false,"pais":"Colombia","residenciaLegal":true,"anosResidencia":4},"espera":{"municipales":"no","generales":false}}
+{"caso":"Colombia sin residencia legal","entrada":{"nacionalidadEspanola":false,"pasaporteUE":false,"pais":"Colombia","residenciaLegal":false,"anosResidencia":8},"espera":{"municipales":"no"}}
+{"caso":"Argentina 10 años: sin acuerdo","entrada":{"nacionalidadEspanola":false,"pasaporteUE":false,"pais":"Argentina","residenciaLegal":true,"anosResidencia":10},"espera":{"municipales":"no","generales":false}}
+{"caso":"Venezuela 3 años: sin acuerdo","entrada":{"nacionalidadEspanola":false,"pasaporteUE":false,"pais":"Venezuela","residenciaLegal":true,"anosResidencia":3},"espera":{"municipales":"no"}}
+{"caso":"México 20 años: sin acuerdo","entrada":{"nacionalidadEspanola":false,"pasaporteUE":false,"pais":"México","residenciaLegal":true,"anosResidencia":20},"espera":{"municipales":"no"}}
+{"caso":"Perú 5 años","entrada":{"nacionalidadEspanola":false,"pasaporteUE":false,"pais":"Perú","residenciaLegal":true,"anosResidencia":5},"espera":{"municipales":"si_con_tramite"}}
+{"caso":"Ecuador 7 años","entrada":{"nacionalidadEspanola":false,"pasaporteUE":false,"pais":"Ecuador","residenciaLegal":true,"anosResidencia":7},"espera":{"municipales":"si_con_tramite"}}
+{"caso":"Bolivia recién llegado","entrada":{"nacionalidadEspanola":false,"pasaporteUE":false,"pais":"Bolivia","residenciaLegal":true,"anosResidencia":0},"espera":{"municipales":"no"}}
+{"caso":"Reino Unido 3 años","entrada":{"nacionalidadEspanola":false,"pasaporteUE":false,"pais":"Reino Unido","residenciaLegal":true,"anosResidencia":3},"espera":{"municipales":"si_con_tramite"}}
+{"caso":"Noruega 2 años","entrada":{"nacionalidadEspanola":false,"pasaporteUE":false,"pais":"Noruega","residenciaLegal":true,"anosResidencia":2},"espera":{"municipales":"no"}}
+{"caso":"Chile 5 años","entrada":{"nacionalidadEspanola":false,"pasaporteUE":false,"pais":"Chile","residenciaLegal":true,"anosResidencia":5},"espera":{"municipales":"si_con_tramite"}}
+{"caso":"Paraguay 5 años","entrada":{"nacionalidadEspanola":false,"pasaporteUE":false,"pais":"Paraguay","residenciaLegal":true,"anosResidencia":5},"espera":{"municipales":"si_con_tramite"}}

@@ -1,0 +1,5 @@
+{"caso":"todo alto, sin riesgo","factores":{"demanda":90,"retencion":80,"ajuste":90,"utilidad":90,"eficiencia":80,"riesgo":0},"espera":"producir"}
+{"caso":"alto pero ficha sin verificar","factores":{"demanda":90,"retencion":80,"ajuste":60,"utilidad":95,"eficiencia":80,"riesgo":35},"espera":"descartar"}
+{"caso":"medio","factores":{"demanda":60,"retencion":60,"ajuste":65,"utilidad":60,"eficiencia":60,"riesgo":0},"espera":"reescribir"}
+{"caso":"bajo","factores":{"demanda":30,"retencion":40,"ajuste":50,"utilidad":40,"eficiencia":50,"riesgo":0},"espera":"descartar"}
+{"caso":"umbral exacto de 70","factores":{"demanda":70,"retencion":70,"ajuste":70,"utilidad":70,"eficiencia":70,"riesgo":0},"espera":"producir"}
