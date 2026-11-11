@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { porSlug } from '@/lib/secciones';
+import { INFO } from '@/lib/info';
 import Operacion from '@/components/Operacion';
 import EstudioViral from './estudio';
 import { Prevista, VISTAS } from './vistas';
@@ -20,6 +21,7 @@ export default async function Pagina({ params }: { params: Promise<{ seccion: st
         <div><span className="cod">{s.codigo} · {s.agente}</span><h1>{s.nombre}</h1><p className="tenue">{s.sub}</p></div>
         <span className={`chip ${s.alcance === 'Completa' ? 'c-conectado' : s.alcance === 'Básica' ? 'c-sesion_agente' : 'c-apagado'}`}>Alcance en la beta: {s.alcance}</span>
       </header>
+      {INFO[s.slug] && <details className="info"><summary>Qué es esta sección</summary><p><b>{INFO[s.slug][0]}</b> {INFO[s.slug][1]}</p></details>}
       {s.slug === 'estudio-viral' ? <EstudioViral /> : Vista ? await Vista({ s }) : <Prevista s={s} />}
       {s.ops.length > 0 && (
         <section className="panel">

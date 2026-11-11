@@ -356,3 +356,14 @@ pre.json { margin: 0; padding: 10px; border-radius: 3px 10px 3px 10px; border: 1
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .panel, .kpi, .digito, .tarjeta, .fase { transform: none; }
 }
+.acceso { color: var(--texto); padding: 22px; gap: 12px; min-height: 210px; }
+.acceso:hover { text-decoration: none; }
+.acceso h2 { font-size: 24px; }
+.acceso .cod { color: var(--cian); letter-spacing: 0.2em; }
+.acceso .boton { justify-self: start; align-self: end; }
+.info { border: 1px solid var(--linea-2); border-radius: 3px 11px 3px 11px; background: rgba(2, 16, 32, 0.55); font-size: 13px; }
+.info summary { cursor: pointer; list-style: none; min-height: var(--toca); display: flex; align-items: center; gap: 10px; padding: 0 14px; color: var(--cian-2); font-weight: 600; touch-action: manipulation; }
+.info summary::-webkit-details-marker { display: none; }
+.info summary::before { content: "i"; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--cian-2); display: grid; place-items: center; font: italic 600 13px Georgia, serif; box-shadow: 0 0 10px rgba(79, 216, 255, 0.6); }
+.info[open] summary { border-bottom: 1px solid var(--linea-2); }
+.info p { padding: 12px 14px; }
