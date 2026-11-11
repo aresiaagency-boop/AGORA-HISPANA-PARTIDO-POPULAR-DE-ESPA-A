@@ -17,6 +17,7 @@ Se definen en Vercel (Settings → Environment Variables). Los valores los pega 
 | `CORREO_LISTA_PRUEBA` | no | En demo, únicas direcciones que reciben correo. |
 | `PEPE_N8N_URL` | para n8n | URL de producción del webhook `pepe-app`. |
 | `PEPE_N8N_TOKEN` | para n8n | Secreto compartido con n8n. 32 caracteres o más. |
+| `SERVICIO_BUROFAST_URL` · `SERVICIO_BUROINSTANT_URL` | no | Enlaces del directorio «Servicios de la comunidad». |
 | `MARCA_PARTIDO_LOGO` · `MARCA_PARTIDO_ICONO` | solo oficial | Rutas dentro de `/marca-partido/`. Ver `public/marca-partido/LEEME.md`. |
 
 URI de redirección de OAuth: `<APP_ORIGEN>/api/auth/google/callback`.

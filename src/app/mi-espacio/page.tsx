@@ -60,6 +60,8 @@ export default async function MiEspacio() {
           <p className="tenue">Nada de esto está condicionado a afiliarte, y afiliarte no da premios ni servicios.</p>
         </div></section>}
 
+        <a className="paso" href="/servicios"><span className="mono n">i</span><span><b>Servicios de la comunidad</b><br /><span className="tenue">Extranjería y creación de empresas. Información abierta a todos, sin condiciones.</span></span></a>
+
         <section className="panel" id="pepe"><div className="panel-cab"><h3>Habla con PEPE</h3><span className="meta">asistente de IA</span></div><div className="panel-cuerpo pila">
           <ChatPepe sugerencias={['¿Puedo votar?', '¿Qué cambia con la nacionalidad?', 'Tengo una propuesta']} />
           {wa ? <div><a className="boton" href={`https://wa.me/${wa}?text=${encodeURIComponent('Hola PEPE')}`} target="_blank" rel="noreferrer">Seguir por WhatsApp</a></div> : <p className="tenue">WhatsApp se activará cuando el equipo abra ese canal.</p>}

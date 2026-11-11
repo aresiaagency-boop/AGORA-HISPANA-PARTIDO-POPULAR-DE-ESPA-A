@@ -25,6 +25,7 @@ export default function Portada() {
             <span className="cod mono">02</span><h2>Afiliado VIP</h2><p className="tenue">Tu espacio personal: crea tu perfil paso a paso y habla con PEPE.</p><span className="boton primario">Entrar con Google</span>
           </a>
         </div>
+        <p className="tenue" style={{ textAlign: 'center' }}><a href="/servicios">Servicios de la comunidad</a></p>
       </div>
     </main>
   );
